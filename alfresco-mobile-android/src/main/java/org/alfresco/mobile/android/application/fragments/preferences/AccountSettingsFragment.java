@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2015 Alfresco Software Limited.
+ *  Copyright (C) 2005-2017 Alfresco Software Limited.
  *
  * This file is part of Alfresco Activiti Mobile for Android.
  *
@@ -221,13 +221,13 @@ public class AccountSettingsFragment extends AlfrescoFragment implements EditTex
         // CUSTOMIZATION
         menuCustomizationVH = HolderUtils.configure(viewById(R.id.settings_custom_menu_manage),
                 getString(R.string.settings_custom_menu_manage), getString(R.string.settings_custom_menu_summary), -1);
+        HolderUtils.makeMultiLine(menuCustomizationVH.bottomText, 3);
 
         if (ConfigManager.getInstance(getActivity()).hasRemoteConfig(account.getId())
                 && ConfigManager.getInstance(getActivity()).getRemoteConfig(account.getId()).hasViewConfig())
         {
             viewById(R.id.settings_custom_menu_manage_container).setEnabled(false);
             menuCustomizationVH.bottomText.setText(R.string.settings_custom_menu_disable);
-            HolderUtils.makeMultiLine(menuCustomizationVH.bottomText, 3);
         }
         else
         {
@@ -265,13 +265,13 @@ public class AccountSettingsFragment extends AlfrescoFragment implements EditTex
                             syncFavoritesVH.choose.isChecked());
                 }
             });
-        }
 
-        SyncCellularConfigFeature feature = new SyncCellularConfigFeature(getActivity());
-        if (feature.isProtected(account))
-        {
-            syncFavoritesVH.bottomText.setText(R.string.mdm_managed);
-            syncFavoritesVH.choose.setEnabled(false);
+            SyncCellularConfigFeature feature = new SyncCellularConfigFeature(getActivity());
+            if (feature.isProtected(account))
+            {
+                syncFavoritesVH.bottomText.setText(R.string.mdm_managed);
+                syncFavoritesVH.choose.setEnabled(false);
+            }
         }
     }
 
@@ -418,8 +418,7 @@ public class AccountSettingsFragment extends AlfrescoFragment implements EditTex
         // Analytics
         AnalyticsHelper
                 .reportOperationEvent(getActivity(), AnalyticsManager.CATEGORY_ACCOUNT,
-                        AnalyticsManager.ACTION_DELETE, account.getTypeId() == AlfrescoAccount.TYPE_ALFRESCO_CLOUD
-                                ? AnalyticsManager.SERVER_TYPE_CLOUD : AnalyticsManager.SERVER_TYPE_ONPREMISE,
+                        AnalyticsManager.ACTION_DELETE, AnalyticsHelper.getAccountType(getAccount().getTypeId()),
                         1, false);
 
         // In case where currentAccount is the one deleted.
